@@ -11,7 +11,7 @@ import { useLogin } from "@/hooks/useAuth"
 import { authClient } from "@/lib/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
-import { ZCLoginSchema, ZTCLoginSchema } from "@workspace/types/index"
+import { ZCWebLoginSchema, ZTCWebLoginSchema } from "@workspace/types/index"
 import { Button } from "@workspace/ui/components/button"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import {
@@ -51,18 +51,24 @@ export default function LoginForm() {
     },
   })
 
-  const form = useForm<ZTCLoginSchema>({
-    resolver: zodResolver(ZCLoginSchema),
+  const form = useForm<ZTCWebLoginSchema>({
+    resolver: zodResolver(ZCWebLoginSchema),
     defaultValues: {
       email: "",
       password: "",
       rememberMe: false,
+      acceptTerms: false,
     },
   })
 
-  const onSubmit = (data: ZTCLoginSchema) => {
+  const onSubmit = (data: ZTCWebLoginSchema) => {
     login(
-      { ...data, otp: otpCode || undefined },
+      {
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe,
+        otp: otpCode || undefined,
+      },
       {
         onSuccess: (res) => {
           if (res.requiresOtp) {
@@ -275,6 +281,52 @@ export default function LoginForm() {
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
+                    </Field>
+                  )}
+                />
+
+                {/* Terms Checkbox */}
+                <Controller
+                  name="acceptTerms"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      orientation="horizontal"
+                      className="items-center space-y-0 space-x-2 py-0.5"
+                    >
+                      <Checkbox
+                        id="login-terms"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isLoading}
+                        aria-invalid={fieldState.invalid}
+                        className="shrink-0 border-primary"
+                      />
+                      <div className="space-y-1 leading-none">
+                        <FieldLabel
+                          htmlFor="login-terms"
+                          className="cursor-pointer text-xs leading-normal font-medium text-muted-foreground"
+                        >
+                          {t("agreeTerms")}{" "}
+                          <Link
+                            href="/terms"
+                            className="font-semibold text-primary hover:underline"
+                          >
+                            {t("termsOfService")}
+                          </Link>{" "}
+                          {t("and")}{" "}
+                          <Link
+                            href="/privacy"
+                            className="font-semibold text-primary hover:underline"
+                          >
+                            {t("privacyPolicy")}
+                          </Link>
+                        </FieldLabel>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </div>
                     </Field>
                   )}
                 />

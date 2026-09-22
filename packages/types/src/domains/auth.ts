@@ -135,6 +135,16 @@ export const ZCLoginSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
   rememberMe: z.boolean().optional(),
+  acceptTerms: z.boolean().optional(),
 })
 
 export type ZTCLoginSchema = z.infer<typeof ZCLoginSchema>
+
+export const ZCWebLoginSchema = ZCLoginSchema.extend({
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "Must accept terms and conditions",
+  }),
+})
+
+export type ZTCWebLoginSchema = z.infer<typeof ZCWebLoginSchema>
+
