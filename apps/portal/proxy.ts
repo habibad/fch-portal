@@ -47,6 +47,7 @@ export async function proxy(request: NextRequest) {
     }
 
     const { pathname } = request.nextUrl
+    const roles: string[] = data.user.roles || []
     const PORTAL_ROLES = [
       "MEMBER",
       "PASTORAL",
