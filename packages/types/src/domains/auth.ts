@@ -116,7 +116,9 @@ export const ZCRegisterSchema = z
     confirmPassword: z
       .string()
       .min(1, { message: "Confirm password is required" }),
-    acceptTerms: z.boolean(),
+    acceptTerms: z.boolean().refine((val) => val === true, {
+      message: "Must accept terms and conditions",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

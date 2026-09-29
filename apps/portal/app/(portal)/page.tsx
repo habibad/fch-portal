@@ -21,8 +21,15 @@ export default function Page() {
           router.replace("/board")
         } else if (roles.includes("PASTORAL")) {
           router.replace("/pastoral")
-        } else {
+        } else if (roles.includes("MEMBER")) {
           router.replace("/general")
+        } else {
+          const webUrl =
+            process.env.NEXT_PUBLIC_WEB_URL ||
+            (process.env.NEXT_PUBLIC_LOGIN_URL
+              ? new URL(process.env.NEXT_PUBLIC_LOGIN_URL).origin
+              : "http://localhost:3000")
+          window.location.href = `${webUrl.replace(/\/$/, "")}/membership`
         }
       }
     }

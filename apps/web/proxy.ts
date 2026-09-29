@@ -36,7 +36,13 @@ export async function proxy(request: NextRequest) {
         if (response.ok) {
           const data = await response.json()
           if (data && data.authenticated && data.user) {
-            const PORTAL_ROLES = ["MEMBER", "PASTORAL", "BOARD", "SUPER_ADMIN"]
+            const PORTAL_ROLES = [
+              "MEMBER",
+              "PASTORAL",
+              "BOARD",
+              "ADMIN",
+              "SUPER_ADMIN",
+            ]
             const userRoles: string[] = data.user.roles ?? []
             const hasPortalAccess = userRoles.some((r) =>
               PORTAL_ROLES.includes(r)
@@ -47,7 +53,7 @@ export async function proxy(request: NextRequest) {
                 process.env.NEXT_PUBLIC_PORTAL_URL || "http://localhost:3001/"
               return NextResponse.redirect(new URL(portalUrl))
             } else {
-              return NextResponse.redirect(new URL("/", request.url))
+              return NextResponse.redirect(new URL("/membership", request.url))
             }
           }
         }

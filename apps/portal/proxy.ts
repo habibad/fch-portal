@@ -47,14 +47,20 @@ export async function proxy(request: NextRequest) {
     }
 
     const { pathname } = request.nextUrl
-    const roles: string[] = data.user.roles || []
-
-    const PORTAL_ROLES = ["MEMBER", "PASTORAL", "BOARD", "SUPER_ADMIN"]
+    const PORTAL_ROLES = [
+      "MEMBER",
+      "PASTORAL",
+      "BOARD",
+      "ADMIN",
+      "SUPER_ADMIN",
+    ]
     const hasPortalAccess = roles.some((r) => PORTAL_ROLES.includes(r))
     if (!hasPortalAccess) {
-      const loginUrl = process.env.NEXT_PUBLIC_LOGIN_URL || "http://localhost:3000/login"
-      const webUrl = process.env.NEXT_PUBLIC_WEB_URL || new URL(loginUrl).origin
-      return NextResponse.redirect(new URL(webUrl))
+      const loginUrl =
+        process.env.NEXT_PUBLIC_LOGIN_URL || "http://localhost:3000/login"
+      const webUrl =
+        process.env.NEXT_PUBLIC_WEB_URL || new URL(loginUrl).origin
+      return NextResponse.redirect(new URL("/membership", webUrl))
     }
 
     if (pathname === "/") {
